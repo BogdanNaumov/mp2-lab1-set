@@ -14,76 +14,101 @@ static TSet FAKE_SET(1);
 
 TSet::TSet(int mp) : BitField(-1)
 {
+
 }
 
 // конструктор копирования
 TSet::TSet(const TSet &s) : BitField(-1)
 {
+
 }
 
 // конструктор преобразования типа
 TSet::TSet(const TBitField &bf) : BitField(-1)
 {
+
 }
 
 TSet::operator TBitField()
 {
-    return FAKE_BITFIELD;
+    return BitField;
 }
 
 int TSet::GetMaxPower(void) const // получить макс. к-во эл-тов
 {
-    return FAKE_INT;
+    return MaxPower;
 }
 
 int TSet::IsMember(const int Elem) const // элемент множества?
 {
-    return FAKE_INT;
+    return BitField.GetBit(Elem);
 }
 
 void TSet::InsElem(const int Elem) // включение элемента множества
 {
+    BitField.SetBit(Elem);
 }
 
 void TSet::DelElem(const int Elem) // исключение элемента множества
 {
+    BitField.ClrBit(Elem);
 }
 
 // теоретико-множественные операции
 
 TSet& TSet::operator=(const TSet &s) // присваивание
 {
-    return FAKE_SET;
+    MaxPower = s.MaxPower;
+    BitField = s.BitField;
+    return *this;
 }
 
 int TSet::operator==(const TSet &s) const // сравнение
 {
-    return FAKE_INT;
+    return BitField == s.BitField;
 }
 
 int TSet::operator!=(const TSet &s) const // сравнение
 {
-    return FAKE_INT;
+    return ~(BitField == s.BitField);
 }
 
 TSet TSet::operator+(const TSet &s) // объединение
 {
-    return FAKE_SET;
+    int len;
+    if (MaxPower > s.MaxPower)
+        len = MaxPower;
+    else
+        len = s.MaxPower;
+    TSet res(len);
+    res.BitField = BitField | s.BitField;
+    return res;
 }
 
 TSet TSet::operator+(const int Elem) // объединение с элементом
 {
-    return FAKE_SET;
+    TSet a(*this);
+    a.BitField.SetBit(Elem);
+    return a;
 }
 
 TSet TSet::operator-(const int Elem) // разность с элементом
 {
-    return FAKE_SET;
+    TSet a(*this);
+    a.BitField.ClrBit(Elem);
+    return a;
 }
 
 TSet TSet::operator*(const TSet &s) // пересечение
 {
-    return FAKE_SET;
+    int len;
+    if (MaxPower > s.MaxPower)
+        len = MaxPower;
+    else
+        len = s.MaxPower;
+    TSet res(len);
+    res.BitField = BitField & s.BitField;
+    return res;
 }
 
 TSet TSet::operator~(void) // дополнение
